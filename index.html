@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="ko">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8" />
+<title>주접 헌정관</title>
+<style>
+  :root {
+    --wall: #2a1420;
+    --wall-deep: #17090f;
+    --gold-hi: #f3d68f;
+    --gold: #e8c36a;
+    --gold-mid: #b9862f;
+    --gold-shadow: #6e4c14;
+    --cream: #f6e9d2;
+    --cream-dim: #cdb99e;
+    --ink: #38222e;
+    --rose: #e56b8c;
+    --paper: #f9efdd;
+    --paper-2: #f4e4c8;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 18%, rgba(243, 214, 143, 0.10), transparent 60%),
+      radial-gradient(ellipse 140% 100% at 50% 45%, var(--wall), var(--wall-deep) 85%);
+    background-attachment: fixed;
+    color: var(--cream);
+    font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    overflow-x: hidden;
+  }
+
+  .serif {
+    font-family: "Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  }
+
+  /* ── 상단 헤더 ─────────────────────────── */
+  header {
+    text-align: center;
+    padding: 44px 20px 8px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.42em;
+    text-indent: 0.42em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: "Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+    font-weight: 700;
+    font-size: clamp(30px, 5vw, 44px);
+    margin: 0 0 6px;
+    letter-spacing: 0.06em;
+    color: var(--cream);
+    text-wrap: balance;
+  }
+  h1 .gold { color: var(--gold-hi); }
+  .tagline {
+    color: var(--cream-dim);
+    font-size: 14px;
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── 입력부 ────────────────────────────── */
+  .console {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 26px 20px 10px;
+  }
+  .console input {
+    width: min(280px, 70vw);
+    padding: 13px 18px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--cream);
+    background: rgba(23, 9, 15, 0.55);
+    border: 1px solid rgba(232, 195, 106, 0.45);
+    border-radius: 3px;
+    outline: none;
+    letter-spacing: 0.04em;
+  }
+  .console input::placeholder { color: rgba(205, 185, 158, 0.5); }
+  .console input:focus-visible {
+    border-color: var(--gold-hi);
+    box-shadow: 0 0 0 3px rgba(232, 195, 106, 0.18);
+  }
+  .console button {
+    padding: 13px 26px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    letter-spacing: 0.08em;
+    color: #2b1608;
+    cursor: pointer;
+    border: 1px solid var(--gold-shadow);
+    border-radius: 3px;
+    background: linear-gradient(180deg, var(--gold-hi), var(--gold-mid));
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.5);
+    transition: transform 0.12s ease, filter 0.12s ease;
+  }
+  .console button:hover { filter: brightness(1.07); transform: translateY(-1px); }
+  .console button:active { transform: translateY(1px); }
+  .console button:focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; }
+
+  /* ── 전시 스테이지 ─────────────────────── */
+  .stage {
+    display: grid;
+    grid-template-columns: 1fr minmax(320px, 460px) 1fr;
+    gap: 28px;
+    align-items: start;
+    max-width: 1240px;
+    margin: 26px auto 60px;
+    padding: 0 24px;
+  }
+
+  /* ── 액자 ──────────────────────────────── */
+  .frame-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .spotlight {
+    position: absolute;
+    inset: -80px -60px auto;
+    height: 130%;
+    background: radial-gradient(ellipse 55% 48% at 50% 38%, rgba(243,214,143,0.13), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .frame {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 15px;
+    background:
+      linear-gradient(135deg, var(--gold-hi) 0%, var(--gold-mid) 28%, var(--gold-hi) 50%, var(--gold-shadow) 78%, var(--gold-mid) 100%);
+    border-radius: 4px;
+    box-shadow:
+      0 30px 60px -18px rgba(0, 0, 0, 0.75),
+      0 6px 18px rgba(0, 0, 0, 0.5),
+      inset 0 0 0 1px rgba(255, 245, 214, 0.55);
+  }
+  .frame::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(110, 76, 20, 0.9);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .frame-inner {
+    position: relative;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% 8%, rgba(243, 214, 143, 0.08), transparent 55%),
+      linear-gradient(180deg, #331825, #22101a);
+    border: 4px double rgba(232, 195, 106, 0.65);
+    padding: 44px 30px 34px;
+    text-align: center;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+  }
+  .corner {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    color: var(--gold-shadow);
+    z-index: 2;
+  }
+  .corner svg { display: block; width: 100%; height: 100%; }
+  .corner.tl { top: -3px; left: -3px; }
+  .corner.tr { top: -3px; right: -3px; transform: scaleX(-1); }
+  .corner.bl { bottom: -3px; left: -3px; transform: scaleY(-1); }
+  .corner.br { bottom: -3px; right: -3px; transform: scale(-1); }
+
+  .reg-no {
+    font-size: 12px;
+    letter-spacing: 0.34em;
+    text-indent: 0.34em;
+    color: var(--gold);
+  }
+  .honor-name {
+    font-family: "Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+    font-size: clamp(28px, 6.5vw, 50px);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--cream);
+    letter-spacing: 0.05em;
+    margin: 2px 0 6px;
+    text-shadow: 0 0 34px rgba(243, 214, 143, 0.35);
+    text-wrap: balance;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+  }
+  .honor-name.long { font-size: clamp(24px, 5vw, 38px); }
+  .honor-name.xlong { font-size: clamp(20px, 4.2vw, 30px); }
+  .honor-name.xxlong { font-size: clamp(18px, 3.6vw, 25px); }
+  .honor-name .t { color: var(--gold-hi); }
+  .divider {
+    width: 120px;
+    margin: 0 auto;
+    border: none;
+    border-top: 1px solid rgba(232, 195, 106, 0.5);
+    position: relative;
+  }
+  .divider::after {
+    content: "◆";
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    color: var(--gold);
+    background: transparent;
+  }
+  .honor-sub {
+    font-size: 13.5px;
+    color: var(--cream-dim);
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+  .placeholder-note {
+    color: var(--cream-dim);
+    font-size: 15px;
+    line-height: 1.9;
+    letter-spacing: 0.04em;
+  }
+  .placeholder-note strong { color: var(--gold); font-weight: 600; }
+
+  /* 명판 */
+  .plaque {
+    position: relative;
+    z-index: 1;
+    margin-top: 18px;
+    padding: 10px 26px 11px;
+    background: linear-gradient(180deg, var(--gold-hi), var(--gold-mid) 60%, var(--gold-shadow));
+    color: #2b1608;
+    border-radius: 2px;
+    border: 1px solid var(--gold-shadow);
+    box-shadow: 0 8px 20px -8px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.55);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .plaque .stats {
+    display: block;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .again-row { margin-top: 22px; z-index: 1; }
+  .again-row button {
+    padding: 10px 22px;
+    font-size: 13.5px;
+    font-family: inherit;
+    letter-spacing: 0.1em;
+    color: var(--gold-hi);
+    background: transparent;
+    border: 1px solid rgba(232, 195, 106, 0.5);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .again-row button:hover { background: rgba(232, 195, 106, 0.12); }
+  .again-row button:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 2px; }
+
+  /* ── 주접 방명록 벽 ────────────────────── */
+  .wall-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 26px;
+    min-width: 0;
+  }
+  .wall-col.right { padding-top: 64px; }
+
+  .note {
+    position: relative;
+    background: linear-gradient(180deg, var(--paper), var(--paper-2));
+    color: var(--ink);
+    padding: 15px 17px 13px;
+    border-radius: 2px;
+    box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.65);
+    font-size: 13.8px;
+    line-height: 1.65;
+    max-width: 340px;
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .note.shown {
+    opacity: 1;
+    transform: translateY(0) rotate(var(--tilt, 0deg));
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .note::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold-hi), var(--gold-shadow) 75%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+  .note .who {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin-bottom: 5px;
+  }
+  .note .nick {
+    font-weight: 800;
+    font-size: 12.5px;
+    color: #6d2c44;
+    letter-spacing: 0.02em;
+  }
+  .note .badge {
+    font-size: 10.5px;
+    color: var(--gold-shadow);
+    border: 1px solid rgba(110, 76, 20, 0.45);
+    border-radius: 999px;
+    padding: 1px 7px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .note .msg { word-break: keep-all; }
+  .note .hearts {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: var(--rose);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .note.fresh { animation: pop 0.5s ease; }
+  @keyframes pop {
+    0% { transform: translateY(0) rotate(var(--tilt, 0deg)) scale(0.92); }
+    55% { transform: translateY(0) rotate(var(--tilt, 0deg)) scale(1.04); }
+    100% { transform: translateY(0) rotate(var(--tilt, 0deg)) scale(1); }
+  }
+
+  .wall-empty {
+    color: rgba(205, 185, 158, 0.45);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 40px 10px;
+    border: 1px dashed rgba(205, 185, 158, 0.25);
+    border-radius: 3px;
+  }
+
+  footer {
+    text-align: center;
+    color: rgba(205, 185, 158, 0.45);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    padding: 0 20px 46px;
+  }
+
+  /* 헌액 연출 */
+  .frame.reveal { animation: enshrine 0.7s cubic-bezier(0.2, 0.9, 0.25, 1.2); }
+  @keyframes enshrine {
+    0% { transform: scale(0.93); filter: brightness(0.6); }
+    60% { transform: scale(1.015); filter: brightness(1.15); }
+    100% { transform: scale(1); filter: brightness(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .frame.reveal { animation: none; }
+    .note, .note.shown { transition: none; opacity: 1; transform: rotate(var(--tilt, 0deg)); }
+    .note.fresh { animation: none; }
+  }
+
+  /* ── 반응형 ────────────────────────────── */
+  @media (max-width: 900px) {
+    .stage {
+      grid-template-columns: 1fr;
+      max-width: 560px;
+      gap: 8px;
+    }
+    .frame-zone { order: 1; }
+    .wall-col.left { order: 2; padding-top: 34px; }
+    .wall-col.right { order: 3; padding-top: 20px; }
+    .wall-col { align-items: center; }
+    .note { max-width: 100%; width: 100%; }
+  }
+</style>
+
+<header>
+  <p class="eyebrow">HALL OF JUJEOP · 상설 전시</p>
+  <h1>주접 <span class="gold">헌정관</span></h1>
+  <p class="tagline">이름을 봉헌하시면, 관람객 일동이 준비된 주접으로 헌액식을 거행합니다.</p>
+</header>
+
+<div class="console">
+  <input id="nameInput" type="text" maxlength="12" placeholder="헌액할 성함을 입력하세요" autocomplete="off" />
+  <button id="goBtn" type="button">헌액하기</button>
+</div>
+
+<main class="stage">
+  <aside class="wall-col left" id="wallLeft" aria-label="관람객 주접 방명록 (왼쪽 벽)">
+    <div class="wall-empty">아직 조용한 벽입니다.<br />헌액식이 시작되길 기다리는 중…</div>
+  </aside>
+
+  <section class="frame-zone" aria-live="polite">
+    <div class="spotlight"></div>
+    <div class="frame" id="frame">
+      <span class="corner tl" aria-hidden="true"><svg viewBox="0 0 34 34" fill="none"><path d="M2 32 C2 14 14 2 32 2" stroke="currentColor" stroke-width="2.4"/><path d="M7 32 C7 17.5 17.5 7 32 7" stroke="currentColor" stroke-width="1.2"/><circle cx="6.5" cy="6.5" r="3" fill="currentColor"/></svg></span>
+      <span class="corner tr" aria-hidden="true"><svg viewBox="0 0 34 34" fill="none"><path d="M2 32 C2 14 14 2 32 2" stroke="currentColor" stroke-width="2.4"/><path d="M7 32 C7 17.5 17.5 7 32 7" stroke="currentColor" stroke-width="1.2"/><circle cx="6.5" cy="6.5" r="3" fill="currentColor"/></svg></span>
+      <span class="corner bl" aria-hidden="true"><svg viewBox="0 0 34 34" fill="none"><path d="M2 32 C2 14 14 2 32 2" stroke="currentColor" stroke-width="2.4"/><path d="M7 32 C7 17.5 17.5 7 32 7" stroke="currentColor" stroke-width="1.2"/><circle cx="6.5" cy="6.5" r="3" fill="currentColor"/></svg></span>
+      <span class="corner br" aria-hidden="true"><svg viewBox="0 0 34 34" fill="none"><path d="M2 32 C2 14 14 2 32 2" stroke="currentColor" stroke-width="2.4"/><path d="M7 32 C7 17.5 17.5 7 32 7" stroke="currentColor" stroke-width="1.2"/><circle cx="6.5" cy="6.5" r="3" fill="currentColor"/></svg></span>
+      <div class="frame-inner" id="frameInner">
+        <p class="placeholder-note">
+          이 자리는 <strong>차기 국보</strong>를 위해 비워두었습니다.<br />
+          위에 성함을 적어 주시면<br />
+          큐레이터가 즉시 헌액식을 시작합니다.
+        </p>
+      </div>
+    </div>
+    <div class="plaque" id="plaque" hidden></div>
+    <div class="again-row" id="againRow" hidden>
+      <button id="againBtn" type="button">⟲ 주접 다시 떨기</button>
+    </div>
+  </section>
+
+  <aside class="wall-col right" id="wallRight" aria-label="관람객 주접 방명록 (오른쪽 벽)">
+    <div class="wall-empty">관람객 입장 대기 중…<br />손수건과 심장약 지참 바랍니다.</div>
+  </aside>
+</main>
+
+<footer>본 전시관의 모든 주접은 진심 100%로 제작되었습니다 · 심장 관리에 유의하세요</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* 이름 앞에 그대로 이어 붙는 합체형 칭호 조각들 */
+  var BOOSTERS = [
+    "슈퍼울트라", "울트라", "하이퍼", "익스트림", "레전드",
+    "프리미엄", "리미티드에디션", "그랜드마스터", "초특급", "황제급",
+    "갓", "메가톤급", "절대", "궁극의", "전설의",
+    "금단의", "월드클래스", "역대급", "은하공인", "치트키급"
+  ];
+
+  var FUSIONS = [
+    "큐티섹시", "심쿵유발", "국보급", "우주최강", "심장폭행",
+    "치명매력", "황금비율", "미모만렙", "광채작렬", "만찢",
+    "럭키비키", "꿀성대", "천상계", "비주얼깡패", "주접유발",
+    "심장도둑", "눈부심주의", "매력과다", "인간비타민", "존재값만렙",
+    "울트라섹시", "치명적섹시", "섹시카리스마", "관능폭발", "페로몬과다",
+    "심멎유발", "마성의", "치명적유혹", "섹시디바", "숨멎비주얼",
+    "아찔한", "도발적눈빛", "매혹의화신", "중독성섹시", "심장저격",
+    "백만불짜리", "홀릭유발", "월드섹시", "레드카펫급", "각선미장인",
+    "섹시폭격기", "은밀한매력의", "치명적뒤태", "옆태장인"
+  ];
+
+  var NICKS = [
+    "심장전당포주인", "문화재청인턴", "국보지킴이", "주접장인",
+    "눈물닦는관람객", "심장약상시지참", "큐레이터몰래옴", "1열관람객",
+    "손수건3장째", "기절1회경험자", "주접학과수석", "전시장죽돌이",
+    "심장CPR중", "관람평점남기는사람", "새벽에또옴", "액자닦기봉사자"
+  ];
+
+  var BADGES = [
+    "관람 999회차", "VIP 관람객", "오늘 3번째 방문", "기절 경력자",
+    "손수건 지참", "심장약 복용 중", "새벽 관람러", "명예 큐레이터",
+    "1열 고정석", "주접 학사 취득"
+  ];
+
+  var COMMENTS = [
+    "경찰서죠? 여기 심장 도둑 전시돼 있어요. 제 심장 돌려받기는 포기할게요, 그냥 신고만…",
+    "{name}님 보고 나서 시력이 2.0 됐습니다. 눈이 정화돼서 그래요. 안과가 저 때문에 폐업 위기래요.",
+    "문화재청에 정식으로 민원 넣었습니다. 움직이는 국보를 왜 아직도 등재 안 하냐고요.",
+    "{name}이라는 단어, 국어사전에 '완벽'의 유의어로 올려야 한다고 국립국어원에 건의했습니다.",
+    "숨을 쉬시네요… 숨 쉬는 것도 잘하셔… 오늘도 배우고 갑니다.",
+    "밤에 잠이 안 와요. {name}님이 너무 눈부셔서 커튼을 3겹 쳤는데도 소용이 없어요.",
+    "유네스코에서 연락 왔대요. {name}님 등재하려는데 카테고리가 없어서 신설 중이라고.",
+    "심장아 제발 나대지 마… 관람 온 지 5분 만에 벌써 세 번째 경고했다…",
+    "{name}님 얼굴이 이력서 스펙입니다. 자격증란에 '얼굴'이라고 쓰세요.",
+    "저 오늘 지갑 잃어버렸는데 하나도 안 슬퍼요. {name}님 봤으니까 이번 주 운 다 쓴 거죠.",
+    "나라에 세금 내듯이 {name}님한테 심장 냅니다. 연말정산 됩니까?",
+    "박물관 경비 아저씨가 저더러 그만 오래요. 근데 어떡해요, 발이 자동으로 여기로 오는데.",
+    "{name}님은 존재 자체가 복지입니다. 국가에서 저희한테 이런 복지를 주셔도 되는 겁니까.",
+    "천사가 지상 근무 나오면 잡아가는 거 아니었어요? {name}님 어떻게 아직 여기 계세요?",
+    "오늘 하늘에 별이 하나 없더라고요. 다 여기 내려와서 {name}(으)로 계신 거였어요.",
+    "의사 선생님이 심장이 왜 이러냐고 물어보셔서 {name}님 사진 보여드렸더니 납득하셨습니다.",
+    "{name}님 지나간 자리에 꽃 피는 거 저만 봤어요? 식물학계가 발칵 뒤집혀야 하는데.",
+    "미술관 다 다녀봤는데요, 모나리자가 여기 와서 한 수 배워야 합니다.",
+    "저장 공간이 부족합니다… 제 마음에 {name}님이 너무 많이 저장돼서요.",
+    "다이너마이트보다 위험한 게 {name}님 미소인 거 아시죠? 국제 협약으로 규제해야 함.",
+    "{name}님 덕분에 아침형 인간 됐어요. 눈 뜨자마자 전시관 오픈런 해야 하니까요.",
+    "손수건 세 장 다 젖었습니다. 너무 완벽해서 우는 건 처음이에요.",
+    "관람평 남깁니다: 별 다섯 개로는 부족해서 밤하늘 통째로 드립니다. ★∞",
+    "{name}님 성함 세 글자 쓰는 것만으로 제 글씨체가 명필이 됩니다. 이게 되네요."
+  ];
+
+  var STAMP_RATINGS = ["실신 지수 99.9%", "심쿵 경보 발령", "관람객 전원 기립", "손수건 품절 사태", "새벽 오픈런 확인"];
+
+  var nameInput = document.getElementById("nameInput");
+  var goBtn = document.getElementById("goBtn");
+  var againBtn = document.getElementById("againBtn");
+  var againRow = document.getElementById("againRow");
+  var frame = document.getElementById("frame");
+  var frameInner = document.getElementById("frameInner");
+  var plaque = document.getElementById("plaque");
+  var wallLeft = document.getElementById("wallLeft");
+  var wallRight = document.getElementById("wallRight");
+
+  var currentName = "";
+  var liveTimer = null;
+  var commentBag = [];
+
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function nextComment() {
+    if (commentBag.length === 0) commentBag = shuffle(COMMENTS);
+    return commentBag.pop();
+  }
+  function fillName(text, name) {
+    return text.split("{name}").join(name);
+  }
+
+  function makeNote(name, tiltDeg) {
+    var note = document.createElement("div");
+    note.className = "note";
+    note.style.setProperty("--tilt", tiltDeg + "deg");
+
+    var who = document.createElement("div");
+    who.className = "who";
+    var nick = document.createElement("span");
+    nick.className = "nick";
+    nick.textContent = pick(NICKS);
+    var badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = pick(BADGES);
+    who.appendChild(nick);
+    who.appendChild(badge);
+
+    var msg = document.createElement("p");
+    msg.className = "msg";
+    msg.style.margin = "0";
+    msg.textContent = fillName(nextComment(), name);
+
+    var hearts = document.createElement("div");
+    hearts.className = "hearts";
+    hearts.textContent = "♥ " + (Math.floor(Math.random() * 9000) + 999).toLocaleString() + "  · 방금 전";
+
+    note.appendChild(who);
+    note.appendChild(msg);
+    note.appendChild(hearts);
+    return note;
+  }
+
+  function makeFusedTitle() {
+    var t = pick(FUSIONS);
+    /* 35% 확률로 칭호 두 개가 겹쳐 붙는다 (예: 치명적섹시 + 심장폭행) */
+    if (Math.random() < 0.35) {
+      var second = pick(FUSIONS);
+      /* "마성의", "아찔한" 같은 수식형 조각은 뒤가 아니라 앞에 온다 */
+      if (second !== t && (second + t).length <= 11) {
+        t = /[의한]$/.test(second) ? second + t : t.length <= second.length ? t + second : second + t;
+      }
+    }
+    /* 30% 확률로 강화 접두어까지 붙어 더 길고 요란한 칭호가 된다 */
+    if (Math.random() < 0.3 && t.length <= 12) t = pick(BOOSTERS) + t;
+    return t;
+  }
+
+  function buildFrameContent(name) {
+    var fusedTitle = makeFusedTitle();
+    var fusedFull = fusedTitle + name;
+    var regNo = Math.floor(Math.random() * 998) + 1;
+
+    frameInner.innerHTML = "";
+
+    var reg = document.createElement("p");
+    reg.className = "reg-no";
+    reg.style.margin = "0";
+    reg.textContent = "국보 제 " + regNo + " 호";
+
+    var nameEl = document.createElement("p");
+    nameEl.className = "honor-name";
+    if (fusedFull.length > 17) nameEl.className += " xxlong";
+    else if (fusedFull.length > 12) nameEl.className += " xlong";
+    else if (fusedFull.length > 8) nameEl.className += " long";
+    nameEl.style.margin = "2px 0 6px";
+    var titleSpan = document.createElement("span");
+    titleSpan.className = "t";
+    titleSpan.textContent = fusedTitle;
+    nameEl.appendChild(titleSpan);
+    nameEl.appendChild(document.createTextNode(name));
+
+    var hr = document.createElement("hr");
+    hr.className = "divider";
+
+    var sub = document.createElement("p");
+    sub.className = "honor-sub";
+    sub.textContent = "본 인물은 존재만으로 인류 행복 지수를 상승시켰기에 이곳에 영구 헌액함";
+
+    frameInner.appendChild(reg);
+    frameInner.appendChild(nameEl);
+    frameInner.appendChild(hr);
+    frameInner.appendChild(sub);
+
+    plaque.hidden = false;
+    plaque.innerHTML = "";
+    var pTitle = document.createElement("span");
+    pTitle.textContent = "「 " + fusedFull + " 」 헌액 · " + pick(STAMP_RATINGS);
+    var pStats = document.createElement("span");
+    pStats.className = "stats";
+    pStats.textContent = "누적 관람 " + (Math.floor(Math.random() * 90000) + 10000).toLocaleString() + "명 · 기립 박수 " + (Math.floor(Math.random() * 900) + 100) + "회";
+    plaque.appendChild(pTitle);
+    plaque.appendChild(pStats);
+  }
+
+  function buildWalls(name) {
+    wallLeft.innerHTML = "";
+    wallRight.innerHTML = "";
+    var total = 8;
+    var delayStep = 220;
+    for (var i = 0; i < total; i++) {
+      var tilt = (Math.random() * 4 - 2).toFixed(1);
+      var note = makeNote(name, tilt);
+      (i % 2 === 0 ? wallLeft : wallRight).appendChild(note);
+      (function (el, delay) {
+        setTimeout(function () { el.classList.add("shown"); }, delay);
+      })(note, 350 + i * delayStep);
+    }
+  }
+
+  function refreshOneNote() {
+    if (!currentName) return;
+    var cols = [wallLeft, wallRight];
+    var col = pick(cols);
+    var notes = col.querySelectorAll(".note");
+    if (notes.length === 0) return;
+    var old = notes[Math.floor(Math.random() * notes.length)];
+    var tilt = (Math.random() * 4 - 2).toFixed(1);
+    var fresh = makeNote(currentName, tilt);
+    fresh.classList.add("shown", "fresh");
+    col.replaceChild(fresh, old);
+  }
+
+  function enshrine() {
+    var name = nameInput.value.trim();
+    if (!name) {
+      nameInput.focus();
+      nameInput.placeholder = "성함을 먼저 알려주세요!";
+      return;
+    }
+    currentName = name;
+
+    frame.classList.remove("reveal");
+    void frame.offsetWidth; /* 애니메이션 재시작을 위한 리플로 강제 */
+    frame.classList.add("reveal");
+
+    buildFrameContent(name);
+    buildWalls(name);
+    againRow.hidden = false;
+
+    if (liveTimer) clearInterval(liveTimer);
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduced) liveTimer = setInterval(refreshOneNote, 4200);
+  }
+
+  goBtn.addEventListener("click", enshrine);
+  againBtn.addEventListener("click", enshrine);
+  nameInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") enshrine();
+  });
+})();
+</script>
+
+</html>
