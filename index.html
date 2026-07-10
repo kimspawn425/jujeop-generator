@@ -263,7 +263,15 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .again-row { margin-top: 22px; z-index: 1; }
+  .again-row {
+    margin-top: 22px;
+    z-index: 1;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .again-row[hidden] { display: none; }
   .again-row button {
     padding: 10px 22px;
     font-size: 13.5px;
@@ -374,6 +382,19 @@
     padding: 0 20px 46px;
   }
 
+  /* 이미지 저장용 스냅샷 래퍼 — foreignObject 안에서는 :root가 없으므로
+     스냅샷 시 :root 변수 선언이 이 클래스로 치환되어 주입된다 */
+  .shot-root {
+    width: 1240px;
+    padding: 48px 0 36px;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 12%, rgba(243, 214, 143, 0.10), transparent 60%),
+      radial-gradient(ellipse 140% 100% at 50% 45%, var(--wall), var(--wall-deep) 85%);
+    color: var(--cream);
+    font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+  .shot-root header { padding-top: 0; }
+
   /* 헌액 연출 */
   .frame.reveal { animation: enshrine 0.7s cubic-bezier(0.2, 0.9, 0.25, 1.2); }
   @keyframes enshrine {
@@ -437,6 +458,7 @@
     <div class="plaque" id="plaque" hidden></div>
     <div class="again-row" id="againRow" hidden>
       <button id="againBtn" type="button">⟲ 주접 다시 떨기</button>
+      <button id="saveBtn" type="button">📷 이미지로 저장</button>
     </div>
   </section>
 
@@ -516,6 +538,7 @@
   var nameInput = document.getElementById("nameInput");
   var goBtn = document.getElementById("goBtn");
   var againBtn = document.getElementById("againBtn");
+  var saveBtn = document.getElementById("saveBtn");
   var againRow = document.getElementById("againRow");
   var frame = document.getElementById("frame");
   var frameInner = document.getElementById("frameInner");
@@ -524,6 +547,7 @@
   var wallRight = document.getElementById("wallRight");
 
   var currentName = "";
+  var currentFused = "";
   var liveTimer = null;
   var commentBag = [];
 
@@ -593,6 +617,7 @@
   function buildFrameContent(name) {
     var fusedTitle = makeFusedTitle();
     var fusedFull = fusedTitle + name;
+    currentFused = fusedFull;
     var regNo = Math.floor(Math.random() * 998) + 1;
 
     frameInner.innerHTML = "";
@@ -687,8 +712,94 @@
     if (!reduced) liveTimer = setInterval(refreshOneNote, 4200);
   }
 
+  /* ── 이미지 저장: 화면을 SVG foreignObject로 감싸 캔버스에 그려 PNG로 내려받는다 ── */
+  function renderSnapshot(done, fail) {
+    var W = 1240;
+
+    var wrap = document.createElement("div");
+    wrap.className = "shot-root";
+
+    var css = document.querySelector("style").textContent.split(":root").join(".shot-root");
+    var styleEl = document.createElement("style");
+    styleEl.textContent = css;
+    wrap.appendChild(styleEl);
+
+    var headerClone = document.querySelector("header").cloneNode(true);
+    var stageClone = document.querySelector(".stage").cloneNode(true);
+    var rowInClone = stageClone.querySelector("#againRow");
+    if (rowInClone) rowInClone.parentNode.removeChild(rowInClone);
+    /* 스냅샷에는 등장 애니메이션 중간 상태가 찍히지 않도록 모두 완료 상태로 */
+    var cloneNotes = stageClone.querySelectorAll(".note");
+    for (var i = 0; i < cloneNotes.length; i++) {
+      cloneNotes[i].classList.add("shown");
+      cloneNotes[i].classList.remove("fresh");
+    }
+    var frameClone = stageClone.querySelector(".frame");
+    if (frameClone) frameClone.classList.remove("reveal");
+
+    wrap.appendChild(headerClone);
+    wrap.appendChild(stageClone);
+
+    /* 높이 측정을 위해 화면 밖에서 한 번 렌더 */
+    wrap.style.position = "fixed";
+    wrap.style.left = "-99999px";
+    wrap.style.top = "0";
+    document.body.appendChild(wrap);
+    var H = Math.ceil(wrap.getBoundingClientRect().height);
+    document.body.removeChild(wrap);
+    wrap.style.position = "";
+    wrap.style.left = "";
+    wrap.style.top = "";
+
+    var xhtml = new XMLSerializer().serializeToString(wrap);
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '">' +
+      '<foreignObject width="100%" height="100%">' + xhtml + "</foreignObject></svg>";
+
+    var img = new Image();
+    img.onload = function () {
+      var scale = 2;
+      var canvas = document.createElement("canvas");
+      canvas.width = W * scale;
+      canvas.height = H * scale;
+      var ctx = canvas.getContext("2d");
+      ctx.scale(scale, scale);
+      ctx.drawImage(img, 0, 0);
+      window.__lastShot = canvas; /* 디버그·검증용 */
+      done(canvas);
+    };
+    img.onerror = function () { fail(new Error("snapshot render failed")); };
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
+
+  function downloadImage() {
+    if (!currentFused) return;
+    var oldLabel = saveBtn.textContent;
+    saveBtn.disabled = true;
+    saveBtn.textContent = "📷 액자 포장 중…";
+    renderSnapshot(function (canvas) {
+      canvas.toBlob(function (blob) {
+        var a = document.createElement("a");
+        var url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = currentFused + ".png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+        saveBtn.disabled = false;
+        saveBtn.textContent = oldLabel;
+      }, "image/png");
+    }, function () {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "저장 실패… 다시 시도해주세요";
+      setTimeout(function () { saveBtn.textContent = oldLabel; }, 2500);
+    });
+  }
+
   goBtn.addEventListener("click", enshrine);
   againBtn.addEventListener("click", enshrine);
+  saveBtn.addEventListener("click", downloadImage);
   nameInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") enshrine();
   });
