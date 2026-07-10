@@ -111,6 +111,35 @@
   .console button:active { transform: translateY(1px); }
   .console button:focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; }
 
+  /* ── 주접 분야 선택 ─────────────────────── */
+  .cats {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 20px 0;
+  }
+  .cat {
+    padding: 8px 18px;
+    font-size: 13.5px;
+    font-family: inherit;
+    letter-spacing: 0.06em;
+    color: var(--cream-dim);
+    background: transparent;
+    border: 1px solid rgba(232, 195, 106, 0.35);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .cat:hover { color: var(--gold-hi); border-color: rgba(232, 195, 106, 0.7); }
+  .cat:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 2px; }
+  .cat[aria-pressed="true"] {
+    color: #2b1608;
+    font-weight: 700;
+    background: linear-gradient(180deg, var(--gold-hi), var(--gold-mid));
+    border-color: var(--gold-shadow);
+  }
+
   /* ── 전시 스테이지 ─────────────────────── */
   .stage {
     display: grid;
@@ -201,8 +230,7 @@
     margin: 2px 0 6px;
     text-shadow: 0 0 34px rgba(243, 214, 143, 0.35);
     text-wrap: balance;
-    word-break: break-all;
-    overflow-wrap: anywhere;
+    word-break: keep-all; /* 줄바꿈은 칭호 조각 사이에 넣은 <wbr>에서만 일어난다 */
   }
   .honor-name.long { font-size: clamp(24px, 5vw, 38px); }
   .honor-name.xlong { font-size: clamp(20px, 4.2vw, 30px); }
@@ -435,6 +463,13 @@
   <button id="goBtn" type="button">헌액하기</button>
 </div>
 
+<div class="cats" role="group" aria-label="주접 분야 선택">
+  <button class="cat" type="button" data-cat="random" aria-pressed="true">🎲 랜덤</button>
+  <button class="cat" type="button" data-cat="charm" aria-pressed="false">💘 매력</button>
+  <button class="cat" type="button" data-cat="rich" aria-pressed="false">💰 부자</button>
+  <button class="cat" type="button" data-cat="brain" aria-pressed="false">🧠 지성</button>
+</div>
+
 <main class="stage">
   <aside class="wall-col left" id="wallLeft" aria-label="관람객 주접 방명록 (왼쪽 벽)">
     <div class="wall-empty">아직 조용한 벽입니다.<br />헌액식이 시작되길 기다리는 중…</div>
@@ -481,16 +516,33 @@
     "금단의", "월드클래스", "역대급", "은하공인", "치트키급"
   ];
 
-  var FUSIONS = [
-    "큐티섹시", "심쿵유발", "국보급", "우주최강", "심장폭행",
-    "치명매력", "황금비율", "미모만렙", "광채작렬", "만찢",
-    "럭키비키", "꿀성대", "천상계", "비주얼깡패", "주접유발",
-    "심장도둑", "눈부심주의", "매력과다", "인간비타민", "존재값만렙",
-    "울트라섹시", "치명적섹시", "섹시카리스마", "관능폭발", "페로몬과다",
-    "심멎유발", "마성의", "치명적유혹", "섹시디바", "숨멎비주얼",
-    "아찔한", "도발적눈빛", "매혹의화신", "중독성섹시", "심장저격",
-    "백만불짜리", "홀릭유발", "월드섹시", "레드카펫급", "각선미장인",
-    "섹시폭격기", "은밀한매력의", "치명적뒤태", "옆태장인"
+  var CHARM_FUSIONS = [
+    "큐티섹시", "심쿵유발", "심장폭행", "치명매력", "황금비율",
+    "미모만렙", "광채작렬", "만찢", "비주얼깡패", "심장도둑",
+    "눈부심주의", "매력과다", "울트라섹시", "치명적섹시", "섹시카리스마",
+    "관능폭발", "페로몬과다", "심멎유발", "마성의", "치명적유혹",
+    "섹시디바", "숨멎비주얼", "아찔한", "도발적눈빛", "매혹의화신",
+    "중독성섹시", "심장저격", "백만불짜리", "홀릭유발", "월드섹시",
+    "레드카펫급", "각선미장인", "섹시폭격기", "은밀한매력의", "치명적뒤태", "옆태장인"
+  ];
+
+  var RICH_FUSIONS = [
+    "재벌급", "건물주각", "황금손", "돈복만렙", "억소리나는",
+    "자본주의끝판왕", "로또급", "금수저의정점", "걸어다니는건물", "배당금같은",
+    "주식상한가", "복리의화신", "경제적자유", "포브스등재각", "황금알낳는",
+    "슈퍼리치", "통장이웃는", "재테크만렙", "자산가포스", "금괴급"
+  ];
+
+  var BRAIN_FUSIONS = [
+    "IQ측정불가", "뇌섹", "천재적", "두뇌풀가동", "멘사프리패스",
+    "지식의화신", "아인슈타인급", "브레인섹시", "논리왕", "통찰력만렙",
+    "지혜의샘", "걸어다니는도서관", "인간백과사전", "노벨상후보", "석학포스",
+    "명석두뇌", "지성비주얼", "두뇌치트키", "박사위의박사", "현자급"
+  ];
+
+  var GENERIC_FUSIONS = [
+    "국보급", "우주최강", "천상계", "럭키비키",
+    "인간비타민", "존재값만렙", "꿀성대", "주접유발"
   ];
 
   var NICKS = [
@@ -506,32 +558,72 @@
     "1열 고정석", "주접 학사 취득"
   ];
 
-  var COMMENTS = [
-    "경찰서죠? 여기 심장 도둑 전시돼 있어요. 제 심장 돌려받기는 포기할게요, 그냥 신고만…",
-    "{name}님 보고 나서 시력이 2.0 됐습니다. 눈이 정화돼서 그래요. 안과가 저 때문에 폐업 위기래요.",
+  var GENERIC_COMMENTS = [
     "문화재청에 정식으로 민원 넣었습니다. 움직이는 국보를 왜 아직도 등재 안 하냐고요.",
     "{name}이라는 단어, 국어사전에 '완벽'의 유의어로 올려야 한다고 국립국어원에 건의했습니다.",
     "숨을 쉬시네요… 숨 쉬는 것도 잘하셔… 오늘도 배우고 갑니다.",
-    "밤에 잠이 안 와요. {name}님이 너무 눈부셔서 커튼을 3겹 쳤는데도 소용이 없어요.",
     "유네스코에서 연락 왔대요. {name}님 등재하려는데 카테고리가 없어서 신설 중이라고.",
-    "심장아 제발 나대지 마… 관람 온 지 5분 만에 벌써 세 번째 경고했다…",
-    "{name}님 얼굴이 이력서 스펙입니다. 자격증란에 '얼굴'이라고 쓰세요.",
     "저 오늘 지갑 잃어버렸는데 하나도 안 슬퍼요. {name}님 봤으니까 이번 주 운 다 쓴 거죠.",
-    "나라에 세금 내듯이 {name}님한테 심장 냅니다. 연말정산 됩니까?",
     "박물관 경비 아저씨가 저더러 그만 오래요. 근데 어떡해요, 발이 자동으로 여기로 오는데.",
     "{name}님은 존재 자체가 복지입니다. 국가에서 저희한테 이런 복지를 주셔도 되는 겁니까.",
     "천사가 지상 근무 나오면 잡아가는 거 아니었어요? {name}님 어떻게 아직 여기 계세요?",
     "오늘 하늘에 별이 하나 없더라고요. 다 여기 내려와서 {name}(으)로 계신 거였어요.",
-    "의사 선생님이 심장이 왜 이러냐고 물어보셔서 {name}님 사진 보여드렸더니 납득하셨습니다.",
-    "{name}님 지나간 자리에 꽃 피는 거 저만 봤어요? 식물학계가 발칵 뒤집혀야 하는데.",
-    "미술관 다 다녀봤는데요, 모나리자가 여기 와서 한 수 배워야 합니다.",
     "저장 공간이 부족합니다… 제 마음에 {name}님이 너무 많이 저장돼서요.",
-    "다이너마이트보다 위험한 게 {name}님 미소인 거 아시죠? 국제 협약으로 규제해야 함.",
     "{name}님 덕분에 아침형 인간 됐어요. 눈 뜨자마자 전시관 오픈런 해야 하니까요.",
     "손수건 세 장 다 젖었습니다. 너무 완벽해서 우는 건 처음이에요.",
     "관람평 남깁니다: 별 다섯 개로는 부족해서 밤하늘 통째로 드립니다. ★∞",
     "{name}님 성함 세 글자 쓰는 것만으로 제 글씨체가 명필이 됩니다. 이게 되네요."
   ];
+
+  var CHARM_COMMENTS = [
+    "경찰서죠? 여기 심장 도둑 전시돼 있어요. 제 심장 돌려받기는 포기할게요, 그냥 신고만…",
+    "{name}님 보고 나서 시력이 2.0 됐습니다. 눈이 정화돼서 그래요. 안과가 저 때문에 폐업 위기래요.",
+    "밤에 잠이 안 와요. {name}님이 너무 눈부셔서 커튼을 3겹 쳤는데도 소용이 없어요.",
+    "심장아 제발 나대지 마… 관람 온 지 5분 만에 벌써 세 번째 경고했다…",
+    "{name}님 얼굴이 이력서 스펙입니다. 자격증란에 '얼굴'이라고 쓰세요.",
+    "나라에 세금 내듯이 {name}님한테 심장 냅니다. 연말정산 됩니까?",
+    "의사 선생님이 심장이 왜 이러냐고 물어보셔서 {name}님 사진 보여드렸더니 납득하셨습니다.",
+    "{name}님 지나간 자리에 꽃 피는 거 저만 봤어요? 식물학계가 발칵 뒤집혀야 하는데.",
+    "미술관 다 다녀봤는데요, 모나리자가 여기 와서 한 수 배워야 합니다.",
+    "다이너마이트보다 위험한 게 {name}님 미소인 거 아시죠? 국제 협약으로 규제해야 함."
+  ];
+
+  var RICH_COMMENTS = [
+    "{name}님 지나가시면 땅값이 올라요. 국토교통부가 예의주시 중입니다.",
+    "은행에서 {name}님 오실까 봐 금고를 새로 지었다는 소문이 있습니다.",
+    "포브스에서 전화 왔는데 {name}님 재산 세다가 계산기가 고장 났답니다.",
+    "{name}님 걸음걸이에서 건물주의 여유가 느껴집니다. 월세 절대 안 밀릴게요.",
+    "제 로또 번호보다 {name}님 얼굴이 더 당첨 같아요.",
+    "{name}님이 만지면 다 금이 된대요. 미다스가 특허 침해로 고소 준비 중이랍니다.",
+    "경제 뉴스는 {name}님만 다루면 됩니다. 존재 자체가 상한가라서요.",
+    "{name}님 옆에 서 있기만 해도 신용등급이 오르는 기분이에요.",
+    "재테크 비법 여쭤봤더니 '그냥 {name}(으)로 태어나면 됩니다'라고 하셔서 좌절 중입니다.",
+    "{name}님 눈빛에서 배당금이 느껴져요. 저도 좀 상장시켜 주세요."
+  ];
+
+  var BRAIN_COMMENTS = [
+    "{name}님 뇌 MRI 찍으면 은하수가 나온다는 소문, 사실인가요?",
+    "국립도서관이 {name}님 두뇌를 소장하고 싶다고 공문 보냈답니다.",
+    "{name}님이 말하면 저도 모르게 받아 적어요. 교과서 개정판에 실어야 합니다.",
+    "아인슈타인이 살아 있었다면 {name}님 강의 맨 앞줄에 앉았을 겁니다.",
+    "{name}님 아이디어 하나에 학회가 발칵 뒤집혔다면서요. 논문 각입니다.",
+    "멘사에서 연락 왔는데 {name}님은 시험 없이 프리패스랍니다.",
+    "{name}님과 대화하면 IQ가 오르는 기분이에요. 유료 강의로 파세요.",
+    "노벨위원회가 {name}님 때문에 '전 부문 통합상' 신설을 검토 중이랍니다.",
+    "{name}님 두뇌는 국가전략자산으로 지정해서 보호해야 합니다.",
+    "구글도 모르는 건 {name}님께 물어보면 됩니다. 검색창보다 정확해요."
+  ];
+
+  var CATEGORIES = {
+    random: {
+      fusions: [].concat(CHARM_FUSIONS, RICH_FUSIONS, BRAIN_FUSIONS, GENERIC_FUSIONS),
+      themed: null,
+      sub: "인류 행복 지수를"
+    },
+    charm: { fusions: CHARM_FUSIONS.concat(GENERIC_FUSIONS), themed: CHARM_COMMENTS, sub: "인류 평균 심박수를" },
+    rich: { fusions: RICH_FUSIONS.concat(GENERIC_FUSIONS), themed: RICH_COMMENTS, sub: "국가 GDP 체감치를" },
+    brain: { fusions: BRAIN_FUSIONS.concat(GENERIC_FUSIONS), themed: BRAIN_COMMENTS, sub: "인류 평균 IQ를" }
+  };
 
   var STAMP_RATINGS = ["실신 지수 99.9%", "심쿵 경보 발령", "관람객 전원 기립", "손수건 품절 사태", "새벽 오픈런 확인"];
 
@@ -548,6 +640,7 @@
 
   var currentName = "";
   var currentFused = "";
+  var currentCat = "random";
   var liveTimer = null;
   var commentBag = [];
 
@@ -560,8 +653,17 @@
     }
     return a;
   }
+  function refillBag() {
+    var cat = CATEGORIES[currentCat];
+    if (cat.themed) {
+      /* 테마 멘트가 먼저 소진되도록 뒤쪽(pop 순서)에 배치 */
+      commentBag = shuffle(GENERIC_COMMENTS).concat(shuffle(cat.themed));
+    } else {
+      commentBag = shuffle([].concat(CHARM_COMMENTS, RICH_COMMENTS, BRAIN_COMMENTS, GENERIC_COMMENTS));
+    }
+  }
   function nextComment() {
-    if (commentBag.length === 0) commentBag = shuffle(COMMENTS);
+    if (commentBag.length === 0) refillBag();
     return commentBag.pop();
   }
   function fillName(text, name) {
@@ -599,23 +701,27 @@
     return note;
   }
 
-  function makeFusedTitle() {
-    var t = pick(FUSIONS);
+  /* 칭호를 조각 배열로 반환 — 조각 경계가 곧 줄바꿈 허용 지점이 된다 */
+  function makeFusedTitle(pool) {
+    var parts = [pick(pool)];
     /* 35% 확률로 칭호 두 개가 겹쳐 붙는다 (예: 치명적섹시 + 심장폭행) */
     if (Math.random() < 0.35) {
-      var second = pick(FUSIONS);
-      /* "마성의", "아찔한" 같은 수식형 조각은 뒤가 아니라 앞에 온다 */
-      if (second !== t && (second + t).length <= 11) {
-        t = /[의한]$/.test(second) ? second + t : t.length <= second.length ? t + second : second + t;
+      var second = pick(pool);
+      if (second !== parts[0] && (second + parts[0]).length <= 11) {
+        /* "마성의", "아찔한" 같은 수식형 조각은 뒤가 아니라 앞에 온다 */
+        if (/[의한]$/.test(second)) parts.unshift(second);
+        else if (parts[0].length <= second.length) parts.push(second);
+        else parts.unshift(second);
       }
     }
     /* 30% 확률로 강화 접두어까지 붙어 더 길고 요란한 칭호가 된다 */
-    if (Math.random() < 0.3 && t.length <= 12) t = pick(BOOSTERS) + t;
-    return t;
+    if (Math.random() < 0.3 && parts.join("").length <= 12) parts.unshift(pick(BOOSTERS));
+    return parts;
   }
 
   function buildFrameContent(name) {
-    var fusedTitle = makeFusedTitle();
+    var titleParts = makeFusedTitle(CATEGORIES[currentCat].fusions);
+    var fusedTitle = titleParts.join("");
     var fusedFull = fusedTitle + name;
     currentFused = fusedFull;
     var regNo = Math.floor(Math.random() * 998) + 1;
@@ -633,10 +739,14 @@
     else if (fusedFull.length > 12) nameEl.className += " xlong";
     else if (fusedFull.length > 8) nameEl.className += " long";
     nameEl.style.margin = "2px 0 6px";
-    var titleSpan = document.createElement("span");
-    titleSpan.className = "t";
-    titleSpan.textContent = fusedTitle;
-    nameEl.appendChild(titleSpan);
+    /* 조각 사이에만 <wbr>을 넣어 줄바꿈이 단어 경계에서만 일어나게 한다 */
+    for (var pi = 0; pi < titleParts.length; pi++) {
+      var titleSpan = document.createElement("span");
+      titleSpan.className = "t";
+      titleSpan.textContent = titleParts[pi];
+      nameEl.appendChild(titleSpan);
+      nameEl.appendChild(document.createElement("wbr"));
+    }
     nameEl.appendChild(document.createTextNode(name));
 
     var hr = document.createElement("hr");
@@ -644,7 +754,7 @@
 
     var sub = document.createElement("p");
     sub.className = "honor-sub";
-    sub.textContent = "본 인물은 존재만으로 인류 행복 지수를 상승시켰기에 이곳에 영구 헌액함";
+    sub.textContent = "본 인물은 존재만으로 " + CATEGORIES[currentCat].sub + " 상승시켰기에 이곳에 영구 헌액함";
 
     frameInner.appendChild(reg);
     frameInner.appendChild(nameEl);
@@ -698,6 +808,7 @@
       return;
     }
     currentName = name;
+    commentBag = []; /* 분야가 바뀌었을 수 있으니 멘트 주머니를 새로 채운다 */
 
     frame.classList.remove("reveal");
     void frame.offsetWidth; /* 애니메이션 재시작을 위한 리플로 강제 */
@@ -800,6 +911,18 @@
   goBtn.addEventListener("click", enshrine);
   againBtn.addEventListener("click", enshrine);
   saveBtn.addEventListener("click", downloadImage);
+
+  var catBtns = document.querySelectorAll(".cat");
+  for (var ci = 0; ci < catBtns.length; ci++) {
+    catBtns[ci].addEventListener("click", function () {
+      currentCat = this.getAttribute("data-cat");
+      for (var k = 0; k < catBtns.length; k++) {
+        catBtns[k].setAttribute("aria-pressed", catBtns[k] === this ? "true" : "false");
+      }
+      /* 이미 헌액된 상태라면 새 분야로 즉시 다시 헌액 */
+      if (currentName && nameInput.value.trim()) enshrine();
+    });
+  }
   nameInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") enshrine();
   });
